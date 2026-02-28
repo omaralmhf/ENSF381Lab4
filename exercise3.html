@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Directory (Lab 04)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      line-height: 1.4;
+      color: #162033;
+      background:
+        radial-gradient(circle at 10% 10%, #dbeafe 0%, transparent 42%),
+        radial-gradient(circle at 90% 0%, #e0f2fe 0%, transparent 38%),
+        #eef3fb;
+      padding: 16px;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .panel {
+      background: #ffffff;
+      border: 1px solid #d6e0ef;
+      border-radius: 12px;
+      box-shadow: 0 10px 26px rgba(20, 35, 72, 0.07);
+    }
+
+    .header {
+      padding: 12px 16px;
+      background: linear-gradient(180deg, #ffffff, #f8fbff);
+    }
+
+    .header h1 {
+      margin: 0;
+      text-align: center;
+      font-size: 1.5rem;
+      letter-spacing: 0.01em;
+    }
+
+    .header p {
+      margin: 4px 0 0;
+      text-align: center;
+      color: #66758f;
+    }
+
+    .controls {
+      padding: 12px 16px;
+    }
+
+    .controls-grid {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items: end;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .field label {
+      font-size: 0.85rem;
+      color: #66758f;
+      font-weight: 600;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 9px 10px;
+      font: inherit;
+      border: 1px solid #c7d4e6;
+      border-radius: 8px;
+      background: #fbfdff;
+      color: #162033;
+    }
+
+    .field input:focus,
+    .field select:focus {
+      outline: 2px solid rgba(37, 99, 235, 0.15);
+      border-color: #93c5fd;
+    }
+
+    .btn {
+      border: 1px solid #c7d4e6;
+      background: #fff;
+      color: #162033;
+      border-radius: 8px;
+      padding: 9px 12px;
+      font: inherit;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 120ms ease, border-color 120ms ease, transform 120ms ease;
+    }
+
+    .btn:hover {
+      background: #f6f9ff;
+      border-color: #b7c7de;
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+    }
+
+    .btn:focus-visible {
+      outline: 2px solid rgba(37, 99, 235, 0.22);
+      outline-offset: 1px;
+    }
+
+    .btn-danger {
+      background: #fff5f5;
+      color: #dc2626;
+      border-color: #fecaca;
+    }
+
+    .btn-danger:hover {
+      background: #fee2e2;
+      border-color: #fca5a5;
+    }
+
+    .delete-row {
+      margin-top: 8px;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 8px;
+      align-items: end;
+    }
+
+    .delete-left,
+    .delete-right {
+      display: flex;
+      gap: 8px;
+      align-items: end;
+    }
+
+    .delete-right {
+      justify-content: flex-end;
+    }
+
+    .delete-left .field {
+      width: min(240px, 100%);
+    }
+
+    .grid-wrap {
+      padding: 12px 16px;
+    }
+
+    .grid-wrap h2 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+      color: #66758f;
+    }
+
+    .user-grid {
+      display: grid;
+      gap: 8px;
+    }
+
+    .user-grid.grid-view {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .user-grid.list-view {
+      grid-template-columns: 1fr;
+    }
+
+    .user-card {
+      border: 1px solid #d9e2ef;
+      border-radius: 10px;
+      padding: 10px;
+      background: linear-gradient(180deg, #ffffff, #fbfdff);
+    }
+
+    .user-card h3 {
+      margin: 0 0 6px;
+      font-size: 1rem;
+    }
+
+    .user-card p {
+      margin: 4px 0;
+      font-size: 0.9rem;
+      color: #66758f;
+    }
+
+    @media (max-width: 860px) {
+      .controls-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .controls-grid .btn {
+        width: 100%;
+      }
+
+      .delete-row {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .delete-left,
+      .delete-right {
+        width: 100%;
+      }
+
+      .delete-row .btn {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .controls-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .delete-row {
+        grid-template-columns: 1fr;
+      }
+
+      .delete-left,
+      .delete-right {
+        flex-direction: column;
+        align-items: stretch;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="container" aria-label="User grid starter page">
+    <section class="panel header" aria-labelledby="page-title">
+      <h1 id="page-title">User Directory</h1>
+      <p>View users and delete a user by ID from the API.</p>
+    </section>
+
+    <section class="panel" aria-labelledby="controls-title">
+      <div class="controls">
+        <h2 id="controls-title" style="margin:0; font-size:1rem;">Controls</h2>
+
+        <div class="delete-row">
+          <div class="delete-left">
+            <div class="field">
+              <label for="deleteIdInput">Delete by ID</label>
+              <input id="deleteIdInput" type="number" min="1" placeholder="e.g. 12">
+            </div>
+            <button id="deleteBtn" class="btn btn-danger" type="button" aria-label="Delete user by id">
+              Delete
+            </button>
+          </div>
+          <div class="delete-right">
+            <button id="sortByGroupBtn" class="btn" type="button" aria-label="Sort users by group">
+              Sort by Group
+            </button>
+            <button id="sortByIdBtn" class="btn" type="button" aria-label="Sort users by id">
+              Sort by ID
+            </button>
+            <button id="viewToggleBtn" class="btn" type="button" aria-label="Toggle grid or list view">
+              Grid / List
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel grid-wrap" aria-labelledby="grid-title">
+      <h2 id="grid-title">User Boxes</h2>
+
+      <div id="userGrid" class="user-grid grid-view">
+        No users loaded.
+      </div>
+    </section>
+  </main>
+  <script src="./exercise3.js"></script>
+</body>
+</html>
